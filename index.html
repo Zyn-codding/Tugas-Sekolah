@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TRIO CRASH BUG</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body {
+      background: radial-gradient(circle at top, #1f1f1f, #000);
+      font-family: 'JetBrains Mono', monospace;
+      color: #e2e8f0;
+      min-height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+    /* canvas hujan */
+    #rain-canvas {
+      position: fixed;
+      top:0;left:0;
+      width:100%;height:100%;
+      z-index:0;
+      pointer-events:none;
+    }
+    .content {
+      position: relative;
+      z-index: 1;
+    }
+    .btn-menu, .btn-custom {
+      background: linear-gradient(135deg, #4b5563, #1f2937);
+      border: 1px solid #9ca3af;
+      padding: 0.9rem;
+      border-radius: 0.8rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 0 12px rgba(156,163,175,0.4);
+    }
+    .btn-menu:hover, .btn-custom:hover {
+      transform: scale(1.05);
+      background: #6b7280;
+      box-shadow: 0 0 18px rgba(229,231,235,0.7);
+    }
+    .hidden { display: none; }
+    .page { animation: fadeIn 0.6s ease; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    footer { font-size: 0.75rem; color: #9ca3af; margin-top: 1rem; }
+    .title { color: #d1d5db; }
+  </style>
+</head>
+<body>
+<canvas id="rain-canvas"></canvas>
+
+<div class="content">
+
+<!-- LOGIN PAGE -->
+  <div id="login-page" class="page min-h-screen flex items-center justify-center px-4">
+    <div class="bg-black/80 border border-gray-500 shadow-2xl p-6 rounded-2xl w-full max-w-md animate__animated animate__fadeIn">
+      <h1 class="text-3xl font-bold text-center mb-4 title">🔐 Login</h1>
+      <input id="username" class="w-full p-3 mb-3 rounded-lg bg-black/70 border border-gray-600 text-white text-center" placeholder="Username"/>
+      <input id="password" type="password" class="w-full p-3 mb-4 rounded-lg bg-black/70 border border-gray-600 text-white text-center" placeholder="Password"/>
+      <div class="btn-custom w-full" onclick="login()">Masuk</div>
+      <p class="text-xs text-gray-400 mt-4 text-center">Buy Usn & Pw ke https://Zyuuofficial atau https://t.me/DEBBOFFICIAL</p>
+    </div>
+  </div>
+
+  <!-- MENU UTAMA -->
+  <div id="menu-page" class="hidden page min-h-screen flex flex-col items-center justify-center px-6">
+    <div class="bg-gray-900/70 border border-gray-500 shadow-xl p-8 rounded-2xl w-full max-w-md animate__animated animate__fadeIn">
+      <h1 class="text-4xl font-extrabold text-center mb-8 title tracking-wide">⏬ MENU ⏬</h1>
+      <div class="grid grid-cols-1 gap-4">
+        <div class="btn-menu" onclick="showPage('bug-page')">BUG MENU</div>
+        <div class="btn-menu" onclick="showPage('trackip-page')">🌐 TRACK IP 🌐</div>
+        <div class="btn-menu" onclick="logout()">🔓 Logout 🔓</div>
+      </div>
+    </div>
+    <footer>by @DEBB</footer>
+  </div>
+
+  <!-- BUG MENU -->
+  <div id="bug-page" class="hidden page min-h-screen flex flex-col items-center justify-center px-6">
+    <div class="bg-gray-900/70 border border-gray-500 shadow-xl p-8 rounded-2xl w-full max-w-md">
+      <h1 class="text-3xl font-bold text-center mb-6 title">ZEN INF V1</h1>
+      <input id="nomor" type="text" placeholder="Nomor WhatsApp Target" class="w-full p-3 rounded-lg bg-black/70 border border-gray-600 text-white mb-6 text-center"/>
+      <div class="grid gap-3 mb-6">
+        <div class="btn-custom" onclick="attack('ForceClose Invis')">💣 ForceClose Invis</div>
+        <div class="btn-custom" onclick="attack('Delay Invis')">🕒 Delay Invis</div>
+        <div class="btn-custom" onclick="attack('ForceClose Device')">⚠️ ForceClose Device</div>
+      </div>
+      <div class="text-gray-300 text-sm">⚡ Status: Aktif</div>
+      <div class="mt-6"><div class="btn-custom" onclick="showPage('menu-page')">⬅️ Kembali</div></div>
+    </div>
+  </div>
+
+  <!-- TRACK IP -->
+  <div id="trackip-page" class="hidden page min-h-screen flex flex-col items-center justify-center px-6">
+    <div class="bg-gray-900/70 border border-gray-500 shadow-xl p-8 rounded-2xl w-full max-w-md">
+      <h1 class="text-3xl font-bold text-center mb-6 title">🌍 Track IP</h1>
+      <input id="ipInput" type="text" placeholder="Contoh: 8.8.8.8" class="w-full p-3 rounded-lg bg-black/70 border border-gray-600 text-white mb-4 text-center"/>
+      <div class="btn-custom mb-4" onclick="trackIP()">🔍 Cek IP</div>
+      <div id="ipResult" class="text-sm text-gray-200"></div>
+      <div class="mt-6"><div class="btn-custom" onclick="showPage('menu-page')">⬅️ Kembali</div></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // akun login
+  const users = [
+    { username: "DEBB", password: "DEBB12311" },
+    { username: "RAKHA", password: "RAKHALOVE" },
+    { username: "NAFIS", password: "NAFISLOVE" }
+  ];
+
+  function login() {
+    const u = document.getElementById("username").value.trim();
+    const p = document.getElementById("password").value.trim();
+    const found = users.find(user => user.username === u && user.password === p);
+    if (found) {
+      document.getElementById("login-page").classList.add("hidden");
+      document.getElementById("menu-page").classList.remove("hidden");
+      Swal.fire({icon:"success",title:"Login Berhasil",text:`Selamat datang, ${u}`});
+    } else {
+      Swal.fire({icon:"error",title:"Login Gagal",text:"Username atau Password salah"});
+    }
+  }
+
+  function logout() {
+    document.getElementById("menu-page").classList.add("hidden");
+    document.getElementById("bug-page").classList.add("hidden");
+    document.getElementById("trackip-page").classList.add("hidden");
+    document.getElementById("login-page").classList.remove("hidden");
+    Swal.fire({icon:"info",title:"Logout berhasil"});
+  }
+
+  function showPage(pageId) {
+    ["menu-page","bug-page","trackip-page"].forEach(id=>{
+      document.getElementById(id)?.classList.add("hidden");
+    });
+    document.getElementById(pageId).classList.remove("hidden");
+  }
+
+  async function trackIP() {
+    const ip = document.getElementById("ipInput").value.trim();
+    if (!ip) return Swal.fire({icon:'warning',title:'IP kosong',text:'Masukkan alamat IP dulu'});
+    try {
+      const res = await fetch(`https://ipwho.is/${ip}`);
+      const data = await res.json();
+      if (!data.success) throw new Error("Tidak valid");
+      document.getElementById("ipResult").innerHTML = `
+        <p><b>IP:</b> ${data.ip}</p>
+        <p><b>Negara:</b> ${data.country} (${data.country_code})</p>
+        <p><b>Kota:</b> ${data.city}</p>
+        <p><b>ISP:</b> ${data.connection?.isp || "-"}</p>
+        <p><b>ONLINE:</b> ${navigator.onLine?'Online':'Offline'}</p>
+       <p><b>RAM:</b> ${navigator.deviceMemory||'Unknown'}</p>
+       <p><b>DEVICE:</b> ${navigator.userAgent}</p>`;
+    } catch (err) {
+      Swal.fire({icon:'error',title:'Gagal',text:err.message});
+    }
+  }
+
+   function showKelebihan(plan, items) {
+    const list = items.map(i => `✔️ ${i}`).join('<br>');
+    Swal.fire({ title:`Kelebihan ${plan}`, html:list, icon:'info', confirmButtonText:'OK', confirmButtonColor:'#2563eb', background:'#0f172a', color:'#e2e8f0' });
+  }
+  function showFitur(plan, items) {
+    const list = items.map(i => `✔️ ${i}`).join('<br>');
+    Swal.fire({ title:`Fitur ${plan}`, html:list, icon:'info', confirmButtonText:'OK', confirmButtonColor:'#2563eb', background:'#0f172a', color:'#e2e8f0' });
+  }
+  function showKeunggulan(plan, items) {
+    const list = items.map(i => `✔️ ${i}`).join('<br>');
+    Swal.fire({ title:`Keunggulan ${plan}`, html:list, icon:'info', confirmButtonText:'OK', confirmButtonColor:'#2563eb', background:'#0f172a', color:'#e2e8f0' });
+  }
+
+  // === Kirim log bug menu ke Telegram ===
+  async function attack(mode) {
+    const number = document.getElementById("nomor").value.trim();
+    if (!number) {
+      return Swal.fire({icon:'warning',title:'Nomor kosong!',text:'Masukkan nomor WA target dulu.'});
+    }
+
+    // tampil notifikasi
+    await Swal.fire({
+      title:`Proces Sending Bug...`,
+      html:`Sending <b>${mode}</b> ke <code>${number}</code>`,
+      timer:2000,
+      timerProgressBar:true,
+      didOpen:()=>Swal.showLoading()
+    });
+    await Swal.fire({icon:'success',title:'Berhasil!',text:`${mode} berhasil dikirim ke ${number}, Perlu waktu 5 memit untuk terkirim.`});
+
+    // kirim log ke Telegram
+    const message = `
+📍 Aksi: ${mode}
+📞 Nomor: ${number}
+🕒 Waktu: ${new Date().toLocaleString("id-ID")}
+    `.trim();
+    await sendTelegramMessage(message);
+  }
+
+  // === Visitor Logger ke Telegram ===
+  const telegramBotToken = "8307447182:AAE9ZrUp_aS8qIeR9Wj6jaQTESrD1TVAO_c";
+  const telegramChatId = "7363571178";
+  const visitStartTime = Date.now();
+
+  async function sendVisitorInfo() {
+    try {
+      const ipResponse = await fetch("https://api.ipify.org?format=json");
+      const ipData = await ipResponse.json();
+      const message = `
+🛰️ Pengunjung Masuk
+🌐 IP: ${ipData.ip}
+📱 Device: ${navigator.platform}
+🧭 Browser: ${navigator.userAgent}
+🔍 Resolusi: ${window.innerWidth}x${window.innerHeight}
+📄 Halaman: ${window.location.href}
+🕒 Waktu: ${new Date().toLocaleString("id-ID")}
+      `.trim();
+      await sendTelegramMessage(message);
+    } catch (e) {
+      console.error("Failed to send visitor info", e);
+    }
+  }
+
+  async function sendTelegramMessage(text) {
+    try {
+      const url = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
+      const params = new URLSearchParams();
+      params.append("chat_id", telegramChatId);
+      params.append("text", text);
+      await fetch(url, {
+        method: "POST",
+        body: params,
+        headers: { "Content-Type": "application/x-www-form-urlencoded" }
+      });
+    } catch (error) {
+      console.error("Failed to send Telegram message:", error);
+    }
+  }
+
+  window.addEventListener("load", sendVisitorInfo);
+
+  window.addEventListener("beforeunload", async () => {
+    const duration = Math.floor((Date.now() - visitStartTime) / 1000);
+    const message = `⏳ Durasi kunjungan: ${duration} detik`;
+    await sendTelegramMessage(message);
+  });
+
+  // === Efek hujan putih ===
+  const canvas = document.getElementById("rain-canvas");
+  const ctx = canvas.getContext("2d");
+  let drops = [];
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener("resize", resizeCanvas);
+  resizeCanvas();
+
+  function createDrops() {
+    drops = [];
+    for (let i=0;i<150;i++) {
+      drops.push({
+        x: Math.random()*canvas.width,
+        y: Math.random()*canvas.height,
+        l: Math.random()*20+10,
+        ys: Math.random()*4+2
+      });
+    }
+  }
+  function drawRain() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.strokeStyle = "rgba(255,255,255,0.7)";
+    ctx.lineWidth = 1;
+    for (let d of drops) {
+      ctx.beginPath();
+      ctx.moveTo(d.x,d.y);
+      ctx.lineTo(d.x,d.y+d.l);
+      ctx.stroke();
+      d.y += d.ys;
+      if (d.y > canvas.height) {
+        d.y = -20;
+        d.x = Math.random()*canvas.width;
+      }
+    }
+    requestAnimationFrame(drawRain);
+  }
+  createDrops();
+  drawRain();
+</script>
+</body>
+</html>
